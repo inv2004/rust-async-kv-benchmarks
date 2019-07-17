@@ -21,3 +21,6 @@ wrk -t2 -c8 -d5s -R100000 http://127.0.0.1:9999 -s test.lua
 TODO:
 - [ ] remove RwLock from single
 - [ ] thread-pool variant
+- [ ] actix with Message
+- [ ] hyper with channels
+
