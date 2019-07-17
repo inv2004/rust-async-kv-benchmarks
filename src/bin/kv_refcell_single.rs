@@ -7,29 +7,32 @@ use futures::{FutureExt, TryFutureExt};
 use futures::compat::{Future01CompatExt};
 use hyper::{Body, Request, Response, Server, service::service_fn, Method, rt::Stream};
 use std::net::SocketAddr;
-use tokio::runtime::current_thread::Runtime;
-use std::sync::{Arc, RwLock};
+use tokio::runtime::current_thread::{Runtime, TaskExecutor};
+use tokio::net::TcpListener;
+use std::{cell::RefCell, rc::Rc};
 
 type Map = HashMap<String, String>;
 
 const INITIAL_CAPACITY: usize = 100_000;
 
 async fn start_server(addr: SocketAddr) {
-    println!("Listening on http://{}", addr);
+    let listener = TcpListener::bind(&addr).unwrap();
+    println!("Listening on http://{}", listener.local_addr().unwrap());
 
-    let cache = Arc::new(RwLock::new(HashMap::with_capacity(INITIAL_CAPACITY)));
+    let cache = Rc::new(RefCell::new(HashMap::with_capacity(INITIAL_CAPACITY)));
 
-    let start_fut = Server::bind(&addr).serve(move || {
-        let cache = cache.clone();
-        service_fn(move |req| serve_req(req, cache.clone()).boxed().compat())
-    } );
+    let start_fut = Server::builder(listener.incoming()).executor(TaskExecutor::current())
+        .serve(move || {
+            let cache = cache.clone();
+            service_fn(move |req| serve_req(req, cache.clone()).boxed_local().compat())
+        } );
 
     if let Err(e) = start_fut.compat().await {
         eprintln!("server error: {}", e);
     }
 }
 
-async fn serve_req(req: Request<Body>, cache: Arc<RwLock<Map>>) -> Result<Response<Body>, hyper::Error> {
+async fn serve_req(req: Request<Body>, cache: Rc<RefCell<Map>>) -> Result<Response<Body>, hyper::Error> {
     let m = req.method();
     match *m {
         Method::GET => {
@@ -38,7 +41,7 @@ async fn serve_req(req: Request<Body>, cache: Arc<RwLock<Map>>) -> Result<Respon
 
 //            println!("get {}", k);
 
-            let cache = cache.read().unwrap();
+            let cache = cache.borrow();
             if let Some (res) = cache.get(&k).cloned() {
                 Ok(Response::new(Body::from(res)))
             } else {
@@ -54,7 +57,7 @@ async fn serve_req(req: Request<Body>, cache: Arc<RwLock<Map>>) -> Result<Respon
 
 //                println!("put {} => {}", k, v);
 
-                let mut cache = cache.write().unwrap();
+                let mut cache = cache.borrow_mut();
                 cache.insert(k.to_string(), v.to_string());
             }
             Ok(Response::new(Body::from("")))
@@ -66,7 +69,7 @@ async fn serve_req(req: Request<Body>, cache: Arc<RwLock<Map>>) -> Result<Respon
 fn main() {
     let addr: SocketAddr = "127.0.0.1:9999".parse().unwrap();
 
-    let fut = start_server(addr).unit_error().boxed().compat();
+    let fut = start_server(addr).unit_error().boxed_local().compat();
 
     let mut rt = Runtime::new().unwrap();
     rt.block_on(fut).unwrap();
