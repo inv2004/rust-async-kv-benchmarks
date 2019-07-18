@@ -1,31 +1,32 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Error};
-use std::sync::{RwLock, Arc};
-use std::collections::HashMap;
+use std::sync::Arc; // судя по коду chashmap здесь RwLock не нужен
 use std::net::SocketAddr;
+use chashmap::CHashMap;
 use futures01::future::{Future, ok};
 
-type Map = HashMap<String, String>;
+type Map = CHashMap<String, String>;
 
 const INITIAL_CAPACITY: usize = 100_000;
 
 fn get(
-    state: web::Data<Arc<RwLock<Map>>>,
+    state: web::Data<Arc<Map>>,
     body: web::Bytes,
 ) -> Box<dyn Future<Item = HttpResponse, Error = Error>> {
     let k = String::from_utf8(body.to_vec()).unwrap();
 
     //    println!("get {}", k);
 
-    let cache = state.read().unwrap();
-    if let Some(res) = cache.get(&k).cloned() {
-        Box::new(ok::<_, Error>(HttpResponse::Ok().body(res)))
+    // let cache = state.read().unwrap();
+    let res = state.get(&k);
+    if let Some(res) = res {
+        Box::new(ok::<_, Error>(HttpResponse::Ok().body(res.to_string())))
     } else {
         Box::new(ok::<_, Error>(HttpResponse::Ok().body("")))
     }
 }
 
 fn put(
-    state: web::Data<Arc<RwLock<Map>>>,
+    state: web::Data<Arc<Map>>,
     body: web::Bytes,
 ) -> Box<dyn Future<Item = HttpResponse, Error = Error>> {
     let s = String::from_utf8(body.to_vec()).unwrap();
@@ -35,8 +36,8 @@ fn put(
 
         //        println!("put {} => {}", k, v);
 
-        let mut cache = state.write().unwrap();
-        cache.insert(k.to_string(), v.to_string());
+        // let cache = state.write().unwrap();
+        state.insert(k.to_string(), v.to_string());
     }
 
     Box::new(ok::<_, Error>(HttpResponse::Ok().body("")))
@@ -45,9 +46,7 @@ fn put(
 fn main() {
     let addr: SocketAddr = "127.0.0.1:9999".parse().unwrap();
 
-    let sys = actix_rt::System::new("kv_actix_async");
-
-    let cache = web::Data::new(Arc::new(RwLock::new(Map::with_capacity(INITIAL_CAPACITY))));
+    let cache = web::Data::new(Arc::new(Map::with_capacity(INITIAL_CAPACITY)));
 
     HttpServer::new(move || {
         println!("Listening on http://{} {:?}", addr, std::thread::current());
@@ -56,10 +55,8 @@ fn main() {
             .route("/", web::get().to_async(get))
             .route("/", web::put().to_async(put))
     })
-    .workers(1)
     .bind(addr)
     .unwrap()
-    .start();
-
-    sys.run().unwrap();
+    .run()
+    .unwrap();
 }

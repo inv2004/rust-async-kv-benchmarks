@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 futures-preview = { version = "=0.3.0-alpha.16", features = ["compat"] }
-futures01 = { package = "futures", version = "0.1" } # , optional = true }
+futures01 = { package = "futures", version = "0.1" }
 hyper = "0.12.32"
 tokio = "0.1.22"
 chashmap = "2.2.2"
