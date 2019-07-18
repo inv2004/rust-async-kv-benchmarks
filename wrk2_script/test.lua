@@ -14,7 +14,7 @@ function request()
         s = tostring(n)
         return wrk.format("PUT", "/", {}, s..":"..s)
     else
-        s = tostring(n)
+        s = tostring(n-1000)
         return wrk.format("GET", "/", {}, s)
     end
 end
