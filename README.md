@@ -1,6 +1,7 @@
 # rust-async-kv-benchmarks
 
-- kv_actix: actix-web. Uses RwLock for Context.
+- kv_actix_rwlock: actix-web. Uses RwLock for Context.
+- kv_actix_cmap: actix-web. Uses RwLock for Context.
 - kv_rwlock_multi: hyper multithreaded. Share via RwLock.
 - kv_refcell_single: hyper singlethreaded.
 - kv_cmap_multi: hyper multi. CHashMap for cache.
@@ -14,7 +15,8 @@ wrk -t2 -c8 -d5s -R100000 http://127.0.0.1:9999 -s test.lua
 
 | test           | wrk2 Requests/sec | 
 | -------------- | ----------------: |
-| actix-web      | 31464.54          |
+| actix_rwlock   | 31464.54          |
+| actix_cmap     | 32064.03          |
 | rwlock_multi   | 39976.96          |
 | refcell_single | 45594.26          |
 | cmap_multi     | 39814.56          |
