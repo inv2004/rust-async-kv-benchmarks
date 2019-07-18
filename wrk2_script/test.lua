@@ -1,10 +1,20 @@
+
+-- for patched wrk2 only https://github.com/inv2004/wrk2
+
+function init(x)
+    tid = wrk.thread.tindex
+end
+
 n = 1
 
-request = function()
-     n = n + 1
-     local r = {}
-     local s = tostring(n)
-     r[1] = wrk.format("PUT", "/", {}, s..":"..s)
-     r[2] = wrk.format("GET", "/", {}, s)
-     return table.concat(r)
+function request()
+    n = n + 1
+    local s
+    if tid == 0 then
+        s = tostring(n)
+        return wrk.format("PUT", "/", {}, s..":"..s)
+    else
+        s = tostring(n)
+        return wrk.format("GET", "/", {}, s)
+    end
 end

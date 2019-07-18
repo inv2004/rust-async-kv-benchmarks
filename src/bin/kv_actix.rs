@@ -1,6 +1,7 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use std::sync::RwLock;
 use std::collections::HashMap;
+use std::net::SocketAddr;
 
 type Map = HashMap<String, String>;
 
@@ -35,15 +36,18 @@ fn put(state: web::Data<RwLock<Map>>, body: web::Bytes) -> impl Responder {
 }
 
 fn main() {
+    let addr: SocketAddr = "127.0.0.1:9999".parse().unwrap();
+
     let cache = web::Data::new(RwLock::new(Map::with_capacity(INITIAL_CAPACITY)));
 
     HttpServer::new(move || {
+        println!("Listening on http://{} {:?}", addr, std::thread::current());
         App::new()
             .register_data(cache.clone())
             .route("/", web::get().to(get))
             .route("/", web::put().to(put))
     })
-        .bind("127.0.0.1:9999")
+        .bind(addr)
         .unwrap()
         .run()
         .unwrap();
