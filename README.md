@@ -8,6 +8,24 @@
 - kv_cmap_multi: hyper multi. CHashMap for cache.
 - kv_cmap_single: hyper single. CHashMap for cache.
 
+### scaleway C2M:
+CPU: Intel(R) Atom(TM) CPU  C2750. 8 cores
+
+```bash
+wrk -t4 -c256 -d10s -R200000 http://127.0.0.1:9999 -s test.lua
+```
+
+| test | wrk2 Requests/sec |
+| -----| -----: |
+| actix_async | 18442.46 |
+| actix_cmap_async | 64495.68 |
+| actix_cmap | 72625.96 |
+| actix_rwlock | 66062.04 |
+| cmap_multi | 59914.52 |
+| cmap_single | 17561.04 |
+| refcell_single | 17581.77 |
+| rwlock_multi | 57112.52 |
+
 ### pc
 CPU: i5-7500. 4 cores
 
@@ -24,24 +42,6 @@ wrk -t2 -c8 -d5s -R100000 http://127.0.0.1:9999 -s test.lua
 | refcell_single | 45594.26          |
 | cmap_multi     | 39814.56          |
 | cmap_single    | 45549.61          |
-
-### scaleway C2M:
-CPU: Intel(R) Atom(TM) CPU  C2750. 8 cores
-
-```bash
-wrk -t4 -c256 -d10s -R200000 http://127.0.0.1:9999 -s test.lua
-```
-
-| test | wrk2 |
-| -----| -----|
-| actix_async | 18442.46 |
-| actix_cmap_async | 64495.68 |
-| actix_cmap | 72625.96 |
-| actix_rwlock | 66062.04 |
-| cmap_multi | 59914.52 |
-| cmap_single | 17561.04 |
-| refcell_single | 17581.77 |
-| rwlock_multi | 57112.52 |
 
 TODO:
 - [x] remove RwLock from single
