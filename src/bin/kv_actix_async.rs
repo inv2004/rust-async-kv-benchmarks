@@ -56,7 +56,7 @@ fn main() {
             .route("/", web::get().to_async(get))
             .route("/", web::put().to_async(put))
     })
-    .workers(1)
+//    .workers(1)
     .bind(addr)
     .unwrap()
     .start();
