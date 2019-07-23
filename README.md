@@ -35,9 +35,10 @@ wrk -t2 -c8 -d5s -R100000 http://127.0.0.1:9999 -s test.lua
 
 | test           | wrk2 Requests/sec | 
 | -------------- | ----------------: |
-| actix_async    |                   |
+| actix_async    | 30069.73          |
 | actix_rwlock   | 31464.54          |
 | actix_cmap     | 32064.03          |
+| actix_msg      | 25091.83          |
 | rwlock_multi   | 39976.96          |
 | refcell_single | 45594.26          |
 | cmap_multi     | 39814.56          |
@@ -47,7 +48,7 @@ TODO:
 - [x] remove RwLock from single
 - [x] separate threads for PUT/GET
 - [x] do not PUT-GET the same number (for cmap)
+- [x] actix with Message
 - [ ] thread-pool variant
-- [ ] actix with Message
 - [ ] hyper with channels
 
