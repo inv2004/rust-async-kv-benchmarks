@@ -1,6 +1,6 @@
 # rust-async-kv-benchmarks
 
-- kv_actix_async. actix-web with RwLock on HashMap, to_async.
+- kv_actix_rwlock_async. actix-web with RwLock on HashMap, to_async.
 - kv_actix_cmap_async. actix-web with CHashMap, to_async.
 - kv_actix_cmap. actix-web with CHashMap.
 - kv_actix_msg. actix-web with Message into sync actor.
@@ -17,17 +17,17 @@ CPU: AMD EPYC 7401P 24-Core Processor. 4 Cores.
 wrk -t4 -c256 -d10s -R200000 http://127.0.0.1:9999 -s test.lua
 ```
 
-| test             | wrk2 Requests/sec |
-| ---------------- | -------: |
-| actix_async      | 66899.86 |
-| actix_cmap_async | 68179.46 |
-| actix_cmap       | 84830.59 |
-| actix_msg        | 45251.34 |
-| actix_rwlock     | 66798.22 |
-| cmap_multi       | 72856.85 |
-| cmap_single      | 40023.77 |
-| refcell_single   | 43050.81 |
-| rwlock_multi     | 64817.87 |
+| test               | wrk2 Requests/sec |
+| ------------------ | -------: |
+| actix_cmap         | 84830.59 |
+| cmap_multi         | 72856.85 |
+| actix_cmap_async   | 68179.46 |
+| actix_rwlock_async | 66899.86 |
+| actix_rwlock       | 66798.22 |
+| rwlock_multi       | 64817.87 |
+| actix_msg          | 45251.34 |
+| refcell_single     | 43050.81 |
+| cmap_single        | 40023.77 |
 
 ### pc
 CPU: i5-7500. 4 cores
