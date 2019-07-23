@@ -1,30 +1,33 @@
 # rust-async-kv-benchmarks
 
-- kv_actix_async: actix-web. to_async with 1 worker.
-- kv_actix_rwlock: actix-web. Uses RwLock for Context.
-- kv_actix_cmap: actix-web. Uses RwLock for Context.
-- kv_rwlock_multi: hyper multithreaded. Share via RwLock.
-- kv_refcell_single: hyper singlethreaded.
-- kv_cmap_multi: hyper multi. CHashMap for cache.
-- kv_cmap_single: hyper single. CHashMap for cache.
+- kv_actix_async. actix-web, to_async.
+- kv_actix_cmap_async. actix-web with CHashMap, to_async.
+- kv_actix_cmap. actix-web with CHashMap.
+- kv_actix_msg. actix-web with Message into sync actor.
+- kv_actix_rwlock. actix-web with RwLock on HashMap
+- kv_cmap_multi. hyper with CHashMap.
+- kv_cmap_single. hyper on current_thread with CHashMap.
+- kv_refcell_single. hyper on current_thread with HashMap.
+- kv_rwlock_multi. hyper with RwLock on HashMap.
 
-### scaleway C2M:
-CPU: Intel(R) Atom(TM) CPU  C2750. 8 cores
+### scaleway:
+CPU: AMD EPYC 7401P 24-Core Processor. 4 Cores.
 
 ```bash
 wrk -t4 -c256 -d10s -R200000 http://127.0.0.1:9999 -s test.lua
 ```
 
-| test | wrk2 Requests/sec |
-| -----| -----: |
-| actix_async | 18442.46 |
-| actix_cmap_async | 64495.68 |
-| actix_cmap | 72625.96 |
-| actix_rwlock | 66062.04 |
-| cmap_multi | 59914.52 |
-| cmap_single | 17561.04 |
-| refcell_single | 17581.77 |
-| rwlock_multi | 57112.52 |
+| test             | wrk2 Requests/sec |
+| ---------------- | -------: |
+| actix_async      | 66899.86 |
+| actix_cmap_async | 68179.46 |
+| actix_cmap       | 84830.59 |
+| actix_msg        | 45251.34 |
+| actix_rwlock     | 66798.22 |
+| cmap_multi       | 72856.85 |
+| cmap_single      | 40023.77 |
+| refcell_single   | 43050.81 |
+| rwlock_multi     | 64817.87 |
 
 ### pc
 CPU: i5-7500. 4 cores
