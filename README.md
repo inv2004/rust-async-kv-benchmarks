@@ -1,6 +1,6 @@
 # rust-async-kv-benchmarks
 
-- kv_actix_async. actix-web, to_async.
+- kv_actix_async. actix-web with RwLock on HashMap, to_async.
 - kv_actix_cmap_async. actix-web with CHashMap, to_async.
 - kv_actix_cmap. actix-web with CHashMap.
 - kv_actix_msg. actix-web with Message into sync actor.
