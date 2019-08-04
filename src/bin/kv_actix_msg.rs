@@ -67,15 +67,12 @@ fn put(
 
         Box::new(state
             .send(Cmd::Put(k.to_owned(), v.to_owned()))
-            .and_then(|res| match res {
+            .and_then(|res| match res { // TODO: is it necessary to wait for reply from put?
                     Some(s) => Ok(HttpResponse::Ok().body(s)),
                     None => Ok(HttpResponse::Ok().body(""))
                 })
             .from_err()
         )
-
-//        let mut cache = state.write().unwrap();
-//        cache.insert(k.to_string(), v.to_string());
     } else {
         Box::new(ok::<_, Error>(HttpResponse::Ok().body("")))
     }

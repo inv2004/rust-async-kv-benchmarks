@@ -11,7 +11,9 @@ futures-preview = { version = "=0.3.0-alpha.16", features = ["compat"] }
 futures01 = { package = "futures", version = "0.1" }
 hyper = "0.12.32"
 tokio = "0.1.22"
+num_cpus = "1.10.1"
 chashmap = "2.2.2"
 actix-web = "1.0.3"
 actix-rt = "0.2.4"
 actix = "0.8.3"
+crossbeam_requests = "0.2.0"

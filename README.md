@@ -9,6 +9,7 @@
 - kv_cmap_single. hyper on current_thread with CHashMap.
 - kv_refcell_single. hyper on current_thread with HashMap.
 - kv_rwlock_multi. hyper with RwLock on HashMap.
+- kv_thr_msg. hyper with crossbeam-channels messages
 
 ### scaleway:
 CPU: AMD EPYC 7401P 24-Core Processor. 4 Cores.
@@ -28,6 +29,7 @@ wrk -t4 -c256 -d10s -R200000 http://127.0.0.1:9999 -s test.lua
 | actix_msg          | 45251.34 |
 | refcell_single     | 43050.81 |
 | cmap_single        | 40023.77 |
+| thr_msg            | not tested yet|
 
 ### pc
 CPU: i5-7500. 4 cores
@@ -38,20 +40,20 @@ wrk -t2 -c8 -d5s -R100000 http://127.0.0.1:9999 -s test.lua
 
 | test           | wrk2 Requests/sec | 
 | -------------- | ----------------: |
-| actix_async    | 30069.73          |
-| actix_rwlock   | 31464.54          |
-| actix_cmap     | 32064.03          |
-| actix_msg      | 25091.83          |
-| rwlock_multi   | 39976.96          |
 | refcell_single | 45594.26          |
-| cmap_multi     | 39814.56          |
 | cmap_single    | 45549.61          |
+| rwlock_multi   | 39976.96          |
+| cmap_multi     | 39814.56          |
+| actix_cmap     | 32064.03          |
+| actix_rwlock   | 31464.54          |
+| thr_msg        | 31139.14          |
+| actix_async    | 30069.73          |
+| actix_msg      | 25091.83          |
 
 TODO:
 - [x] remove RwLock from single
 - [x] separate threads for PUT/GET
 - [x] do not PUT-GET the same number (for cmap)
 - [x] actix with Message
-- [ ] thread-pool variant
-- [ ] hyper with channels
+- [x] hyper with channels
 
