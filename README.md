@@ -1,3 +1,5 @@
+**for patched wrk2 only https://github.com/inv2004/wrk2**
+
 # rust-async-kv-benchmarks
 
 - kv_actix_rwlock_async. actix-web with RwLock on HashMap, to_async.
